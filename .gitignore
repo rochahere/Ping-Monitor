@@ -1,0 +1,15 @@
+database.py
+device_database.db
+devices.py
+ping.log
+report_full.txt
+report_selected_device.txt
+other/chatgpt_checker.py
+other/convert_data.py
+other/devices_test.py
+other/load_database.py
+__pycache__/database.cpython-311.pyc
+__pycache__/device_values.cpython-311.pyc
+__pycache__/devices.cpython-311.pyc
+__pycache__/gui.cpython-311.pyc
+__pycache__/log_config.cpython-311.pyc
