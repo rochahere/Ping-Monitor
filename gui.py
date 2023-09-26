@@ -10,6 +10,7 @@ from datetime import datetime
 import datetime
 import time
 import sqlite3
+import os
 
 # Call the configure_logging function to set up logging
 logger = configure_logging(log_file='ping.log', log_level=logging.DEBUG)
@@ -72,16 +73,26 @@ def ping_target(target, count=10, interval=1):
         time.sleep(interval)
     return results, bad_results
 
-def generate_report(results, filename):
+def generate_report(results):
     """
     Generate a ping report and save it to a file.
 
     Args:
         results (List[Tuple[datetime.datetime, str, float]]): A list of ping results.
-        filename (str): The name of the file to save the report to.
     """
-    with open(filename, "a") as file:
-        file.write("Ping Report - {}\n".format(datetime.datetime.now()))
+
+    # Create the "Reports" folder if it doesn't exist
+    if not os.path.exists("Reports"):
+        os.makedirs("Reports")
+
+    from datetime import datetime as dt
+
+    # Generate the report file name
+    current_datetime = dt.now().strftime("%Y%m%d-%H%M%S")
+    filename = f"{current_datetime} - Ping Monitor Report.txt"
+    report_file_path = os.path.join("Reports", filename)
+
+    with open(report_file_path, "a") as file:
         for result in results:
             timestamp, target, response_time = result
             if response_time is not None:
@@ -101,6 +112,8 @@ def on_generate_full_report():
     bad_count = 0
     disabled_devices = []
     disabled_count = 0
+    report_results = []
+    report = []
 
     # Create a loading dialog
     loading_root = tk.Tk()
@@ -109,16 +122,21 @@ def on_generate_full_report():
     loading_root.update()
 
     for value in db.fetch_devices():
-        if value["status"] == 1:
+        if value["status"] == 0:
             disabled_devices.append(value['name'])
             disabled_count += 1
             continue
         all_results = ping_target(value["ip"], ping_count, ping_interval)
+        report_results.append(all_results[0])
         ping_results = all_results[0]
         if all_results[1]:
             bad_results.append(all_results[1][0])
             bad_count +=1
-        generate_report(ping_results, "report_full.txt")
+    
+    # Flatten nested list
+    report = [j for i in report_results for j in i]
+
+    generate_report(report)
 
     loading_screen.stop()
     loading_screen.close()
