@@ -70,7 +70,6 @@ Follow these steps to get started with the SCADA Ping Monitor:
 1. Clone this repository:
 
 ```bash
-Copy code
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
 ```
