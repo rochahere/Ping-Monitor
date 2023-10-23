@@ -173,7 +173,7 @@ def on_generate_selected_report():
     loading_root.update()
 
     ping_results = ping_target(selected_row[2], ping_count, ping_interval)[0]
-    generate_report(ping_results, "report_selected_device.txt")
+    generate_report(ping_results)
 
     # Close loading window
     loading_screen.stop()
